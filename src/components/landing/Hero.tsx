@@ -16,9 +16,9 @@ export function Hero() {
 
           {/* Headline */}
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.1] animate-fade-slide-in-1">
-            Turn Email Chaos into <br />
+            Turn your Email into <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-white to-indigo-300">
-              Organizational Knowledge
+              operational knowledge
             </span>
           </h1>
 
