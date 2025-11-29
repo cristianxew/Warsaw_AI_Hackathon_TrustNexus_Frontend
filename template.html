@@ -1,0 +1,545 @@
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mail2Knowledge - Structural Intelligence</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary-glow: conic-gradient(from 180deg at 50% 50%, #2a8af6 0deg, #a853ba 180deg, #e92a67 360deg);
+  }
+  body {
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system;
+    background-color: #020617; /* Slate 950 */
+    color: white;
+    overflow-x: hidden;
+  }
+  
+  /* Smooth Fade In */
+  @keyframes fadeSlideIn {
+    0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0px); }
+  }
+
+  /* Gradient Borders */
+  .border-gradient { position: relative; }
+  .border-gradient::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    background: linear-gradient(to bottom right, rgba(255,255,255,0.2), rgba(255,255,255,0));
+    pointer-events: none;
+  }
+
+  /* Marquee Animation */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .animate-marquee { animation: marquee 40s linear infinite; }
+
+  /* Solar Icon Style Helper */
+  .solar-icon { display: inline-block; }
+  .solar-duotone-primary { opacity: 1; fill: currentColor; }
+  .solar-duotone-secondary { opacity: 0.4; fill: currentColor; }
+
+  /* Code Syntax Highlighting Simulation */
+  .token-key { color: #93c5fd; } /* blue-300 */
+  .token-string { color: #86efac; } /* green-300 */
+  .token-number { color: #fca5a5; } /* red-300 */
+  .token-dim { color: #475569; } /* slate-600 */
+  
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #0f172a; }
+  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+  .glass-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+</style>
+</head>
+<body class="antialiased selection:bg-indigo-500/30 selection:text-indigo-200">
+
+  <!-- Background Ambience -->
+  <div class="fixed inset-0 z-[-1]">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-600/20 blur-[120px] rounded-full opacity-50 mix-blend-screen"></div>
+    <div class="absolute bottom-0 right-0 w-[800px] h-[600px] bg-violet-600/10 blur-[100px] rounded-full opacity-30"></div>
+    <div class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="fixed top-0 w-full z-50 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <!-- Logo Icon -->
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="solar-icon">
+            <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" class="solar-duotone-secondary"></path>
+            <path d="M15.5 13.5L12 11.5V7C12 6.45 11.55 6 11 6C10.45 6 10 6.45 10 7V12.16C10 12.59 10.21 13 10.57 13.24L14.63 15.86C15.08 16.15 15.68 16.03 15.98 15.57C16.27 15.11 16.15 14.51 15.69 14.21L15.5 13.5Z" class="solar-duotone-primary"></path>
+          </svg>
+        </div>
+        <span class="font-semibold text-lg tracking-tight text-white">Mail2Knowledge</span>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
+        <a href="#product" class="hover:text-white transition-colors">Product</a>
+        <a href="#integration" class="hover:text-white transition-colors">Integration</a>
+        <a href="#security" class="hover:text-white transition-colors">Security</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <a href="#" class="hidden sm:block text-sm font-medium text-slate-300 hover:text-white transition-colors">Log in</a>
+        <a href="#" class="text-sm font-medium bg-white text-slate-950 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)]">
+          Request Access
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="pt-32 pb-16 sm:pt-40 sm:pb-24 lg:pb-32 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 relative">
+      
+      <div class="max-w-3xl mx-auto text-center space-y-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-medium tracking-wide uppercase animate-[fadeSlideIn_0.5s_ease-out_both]">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+          </span>
+          RAG-Ready Intelligence
+        </div>
+
+        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.1] animate-[fadeSlideIn_0.5s_ease-out_0.1s_both]">
+          Turn Email Chaos into <br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-white to-indigo-300">Organizational Knowledge</span>
+        </h1>
+
+        <p class="text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto animate-[fadeSlideIn_0.5s_ease-out_0.2s_both]">
+          Automatically extract decisions, tasks, and arrangements from B2B communications. 
+          Feed your RAG systems and workflows with structured, clean data.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-[fadeSlideIn_0.5s_ease-out_0.3s_both]">
+          <button class="group relative flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3.5 rounded-xl font-medium transition-all shadow-[0_0_40px_-10px_rgba(79,70,229,0.5)]">
+            Start Processing
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="solar-icon transition-transform group-hover:translate-x-1">
+              <path d="M19.75 11.7256L4.75 11.7256" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M13.7002 5.70124L19.7502 11.7252L13.7002 17.7502" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </button>
+          
+          <button class="flex items-center gap-3 px-8 py-3.5 rounded-xl border border-white/10 hover:bg-white/5 text-slate-300 transition-colors font-medium">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="solar-icon text-indigo-400">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" class="opacity-50"></circle>
+              <path d="M10 8.5V15.5L16 12L10 8.5Z" fill="currentColor"></path>
+            </svg>
+            Watch Demo
+          </button>
+        </div>
+      </div>
+
+      <!-- Hero Visual / Dashboard Preview -->
+      <div class="mt-20 relative max-w-5xl mx-auto animate-[fadeSlideIn_0.8s_ease-out_0.4s_both]">
+        <div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-2xl blur opacity-20"></div>
+        <div class="relative rounded-xl border border-white/10 bg-slate-900/80 backdrop-blur-xl shadow-2xl overflow-hidden">
+          
+          <!-- Window Controls -->
+          <div class="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/5">
+            <div class="flex gap-1.5">
+              <div class="w-3 h-3 rounded-full bg-slate-600"></div>
+              <div class="w-3 h-3 rounded-full bg-slate-600"></div>
+              <div class="w-3 h-3 rounded-full bg-slate-600"></div>
+            </div>
+            <div class="ml-4 text-xs font-medium text-slate-500 flex items-center gap-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="solar-icon"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5"></path></svg>
+              api/v1/email/extract-knowledge
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/5 h-[400px]">
+            <!-- Input Side -->
+            <div class="p-6 space-y-4 bg-slate-950/50">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Raw Email Input</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20">Unstructured</span>
+              </div>
+              <div class="font-mono text-xs sm:text-sm text-slate-400 leading-relaxed opacity-70">
+                <p>From: sarah.j@client-corp.com</p>
+                <p class="mb-4">Subject: Project Alpha Phase 2 Kickoff</p>
+                <p>Hi Team,</p>
+                <p>Following our call, we've decided to proceed with <span class="text-white bg-indigo-500/20 px-1 rounded">Option B</span>. The budget is approved for <span class="text-white bg-emerald-500/20 px-1 rounded">$45,000</span>.</p>
+                <p class="mt-2">Please start the integration <span class="text-white bg-indigo-500/20 px-1 rounded">by next Tuesday</span>. Mike will handle the API keys.</p>
+              </div>
+            </div>
+
+            <!-- Output Side -->
+            <div class="p-6 space-y-4 bg-slate-900/30">
+               <div class="flex items-center justify-between">
+                <span class="text-xs font-medium text-indigo-400 uppercase tracking-wider">Structured Knowledge Graph</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">JSON-LD / RAG Ready</span>
+              </div>
+              <div class="font-mono text-xs sm:text-sm leading-relaxed overflow-hidden">
+                <div class="token-dim">{</div>
+                <div class="pl-4"><span class="token-key">"intent"</span>: <span class="token-string">"Project Approval"</span>,</div>
+                <div class="pl-4"><span class="token-key">"decisions"</span>: [</div>
+                <div class="pl-8">{ <span class="token-key">"selected_option"</span>: <span class="token-string">"Option B"</span>, <span class="token-key">"status"</span>: <span class="token-string">"CONFIRMED"</span> }</div>
+                <div class="pl-4">],</div>
+                <div class="pl-4"><span class="token-key">"financials"</span>: {</div>
+                <div class="pl-8"><span class="token-key">"amount"</span>: <span class="token-number">45000</span>,</div>
+                <div class="pl-8"><span class="token-key">"currency"</span>: <span class="token-string">"USD"</span></div>
+                <div class="pl-4">},</div>
+                <div class="pl-4"><span class="token-key">"action_items"</span>: [</div>
+                <div class="pl-8">{</div>
+                <div class="pl-12"><span class="token-key">"task"</span>: <span class="token-string">"Start Integration"</span>,</div>
+                <div class="pl-12"><span class="token-key">"deadline"</span>: <span class="token-string">"2023-11-14"</span>,</div>
+                <div class="pl-12"><span class="token-key">"assignee"</span>: <span class="token-string">"Mike"</span></div>
+                <div class="pl-8">}</div>
+                <div class="pl-4">]</div>
+                <div class="token-dim">}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Logos Section -->
+  <section class="py-12 border-y border-white/5 bg-slate-900/30">
+    <div class="max-w-7xl mx-auto px-6 mb-8 text-center">
+      <p class="text-sm text-slate-500 font-medium">TRUSTED BY FORWARD-THINKING DATA TEAMS</p>
+    </div>
+    <div class="relative flex overflow-x-hidden group">
+      <div class="animate-marquee whitespace-nowrap flex items-center gap-16 px-8 opacity-50 grayscale transition-all duration-500 hover:grayscale-0 hover:opacity-100">
+        <!-- Reusing SVG paths for company logos - Styled as monotone Iconify SVGs -->
+        <svg class="h-8 w-auto text-white" viewBox="0 0 100 30" fill="currentColor"><path d="M10,15 L20,5 L30,15 L20,25 Z M40,5 H50 V25 H40 Z M60,5 H80 V10 H65 V12 H75 V17 H65 V25 H60 Z"></path></svg>
+        <svg class="h-7 w-auto text-white" viewBox="0 0 100 30" fill="currentColor"><circle cx="15" cy="15" r="10"></circle><rect x="35" y="5" width="20" height="20"></rect><path d="M70,25 L80,5 L90,25"></path></svg>
+        <svg class="h-8 w-auto text-white" viewBox="0 0 100 30" fill="currentColor"><path d="M10,5 H30 V10 H15 V12 H25 V17 H15 V25 H10 Z M40,5 L50,25 L60,5 M70,5 H90 V10 H80 V25 H75 V10 H70 Z"></path></svg>
+        <svg class="h-6 w-auto text-white" viewBox="0 0 100 30" fill="currentColor"><rect x="5" y="5" width="20" height="20" rx="5"></rect><rect x="35" y="5" width="20" height="20" rx="5"></rect><rect x="65" y="5" width="20" height="20" rx="5"></rect></svg>
+        <svg class="h-8 w-auto text-white" viewBox="0 0 100 30" fill="currentColor"><path d="M10,15 L20,5 L30,15 L20,25 Z M40,5 H50 V25 H40 Z M60,5 H80 V10 H65 V12 H75 V17 H65 V25 H60 Z"></path></svg>
+        <svg class="h-7 w-auto text-white" viewBox="0 0 100 30" fill="currentColor"><circle cx="15" cy="15" r="10"></circle><rect x="35" y="5" width="20" height="20"></rect><path d="M70,25 L80,5 L90,25"></path></svg>
+        <svg class="h-8 w-auto text-white" viewBox="0 0 100 30" fill="currentColor"><path d="M10,5 H30 V10 H15 V12 H25 V17 H15 V25 H10 Z M40,5 L50,25 L60,5 M70,5 H90 V10 H80 V25 H75 V10 H70 Z"></path></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Grid -->
+  <section id="product" class="py-24 sm:py-32 relative">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-16 md:text-center max-w-3xl md:mx-auto">
+        <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-6">Built for the AI-Native Enterprise</h2>
+        <p class="text-slate-400 text-lg">Your emails contain 80% of your company's operational context. We make it machine-readable.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-8">
+        
+        <!-- Feature 1 -->
+        <div class="group relative p-8 rounded-3xl bg-slate-900/40 border border-white/5 hover:border-white/10 transition-colors overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-6">
+            <!-- Icon: Solar Document Add Bold Duotone -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="solar-icon">
+              <path class="solar-duotone-secondary" d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" fill="currentColor"></path>
+              <path class="solar-duotone-primary" d="M15.75 9H18.25C18.6642 9 19 8.66421 19 8.25C19 7.83579 18.6642 7.5 18.25 7.5H15.75V5C15.75 4.58579 15.4142 4.25 15 4.25C14.5858 4.25 14.25 4.58579 14.25 5V7.5H11.75C11.3358 7.5 11 7.83579 11 8.25C11 8.66421 11.3358 9 11.75 9H14.25V11.5C14.25 11.9142 14.5858 12.25 15 12.25C15.4142 12.25 15.75 11.9142 15.75 11.5V9Z" fill="currentColor"></path>
+            </svg>
+          </div>
+          
+          <h3 class="text-xl font-semibold text-white mb-3">Semantic Extraction</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Our LLM pipeline identifies entities, dates, costs, and commitments buried in threads. No more manual data entry.
+          </p>
+          
+          <div class="mt-8 relative h-32 w-full rounded-lg bg-slate-950 border border-white/5 overflow-hidden">
+            <div class="absolute top-4 left-4 right-4 space-y-2">
+              <div class="h-2 bg-slate-800 rounded w-3/4"></div>
+              <div class="h-2 bg-slate-800 rounded w-1/2"></div>
+              <div class="flex gap-2 mt-4">
+                <span class="h-6 w-16 bg-indigo-500/20 rounded border border-indigo-500/30"></span>
+                <span class="h-6 w-12 bg-emerald-500/20 rounded border border-emerald-500/30"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="group relative p-8 rounded-3xl bg-slate-900/40 border border-white/5 hover:border-white/10 transition-colors overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-violet-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+          <div class="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400 mb-6">
+            <!-- Icon: Solar Graph New Bold Duotone -->
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="solar-icon">
+              <path class="solar-duotone-secondary" d="M11 13H15C15.5523 13 16 12.5523 16 12C16 11.4477 15.5523 11 15 11H11C10.4477 11 10 11.4477 10 12C10 12.5523 10.4477 13 11 13Z" fill="currentColor"></path>
+              <path class="solar-duotone-primary" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12ZM8.5 12C8.5 13.3807 9.61929 14.5 11 14.5H15C16.3807 14.5 17.5 13.3807 17.5 12C17.5 10.6193 16.3807 9.5 15 9.5H11C9.61929 9.5 8.5 10.6193 8.5 12Z" fill="currentColor"></path>
+            </svg>
+          </div>
+          
+          <h3 class="text-xl font-semibold text-white mb-3">Knowledge Graphing</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Connect disparate emails into a cohesive organizational memory. Link projects to people, and decisions to outcomes.
+          </p>
+
+           <div class="mt-8 relative h-32 w-full flex items-center justify-center">
+             <div class="relative w-24 h-24">
+               <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full z-10 shadow-[0_0_15px_rgba(255,255,255,0.5)]"></div>
+               <div class="absolute top-0 left-0 w-2 h-2 bg-slate-600 rounded-full animate-pulse"></div>
+               <div class="absolute bottom-0 right-0 w-2 h-2 bg-slate-600 rounded-full animate-pulse delay-75"></div>
+               <div class="absolute top-0 right-0 w-2 h-2 bg-slate-600 rounded-full animate-pulse delay-150"></div>
+               <svg class="absolute inset-0 w-full h-full text-slate-800" stroke="currentColor" stroke-width="1">
+                 <line x1="12" y1="12" x2="50%" y2="50%"></line>
+                 <line x1="80" y1="12" x2="50%" y2="50%"></line>
+                 <line x1="80" y1="80" x2="50%" y2="50%"></line>
+               </svg>
+             </div>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="group relative p-8 rounded-3xl bg-slate-900/40 border border-white/5 hover:border-white/10 transition-colors overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          
+          <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 mb-6">
+            <!-- Icon: Solar Database Bold Duotone -->
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="solar-icon">
+              <path class="solar-duotone-secondary" d="M21 7C21 9.76142 16.9706 12 12 12C7.02944 12 3 9.76142 3 7C3 4.23858 7.02944 2 12 2C16.9706 2 21 4.23858 21 7Z" fill="currentColor"></path>
+              <path class="solar-duotone-primary" d="M21 12C21 14.7614 16.9706 17 12 17C7.02944 17 3 14.7614 3 12V7C3 9.76142 7.02944 12 12 12C16.9706 12 21 9.76142 21 7V12Z" fill="currentColor"></path>
+              <path class="solar-duotone-primary" d="M21 17C21 19.7614 16.9706 22 12 22C7.02944 22 3 19.7614 3 17V12C3 14.7614 7.02944 17 12 17C16.9706 17 21 14.7614 21 12V17Z" fill="currentColor"></path>
+            </svg>
+          </div>
+          
+          <h3 class="text-xl font-semibold text-white mb-3">Seamless Sync</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Push cleaned JSON objects directly to your Vector DB, CRM, or Project Management tools via webhooks.
+          </p>
+
+          <div class="mt-8 flex items-center justify-center gap-4">
+             <div class="px-3 py-1.5 rounded-md bg-slate-800 border border-slate-700 text-xs text-slate-300">Pinecone</div>
+             <div class="h-px w-4 bg-slate-600"></div>
+             <div class="px-3 py-1.5 rounded-md bg-slate-800 border border-slate-700 text-xs text-slate-300">Notion</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Demo / Tabs Section -->
+  <section id="integration" class="py-24 bg-slate-900/20 border-y border-white/5">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        
+        <!-- Left Text -->
+        <div class="space-y-8">
+          <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight">How Mail2Knowledge Works</h2>
+          
+          <div class="space-y-2" id="tab-triggers">
+            <button class="w-full text-left p-4 rounded-xl transition-all duration-300 bg-white/5 border border-white/10" onclick="switchTab(0)">
+              <div class="flex items-center gap-4">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 font-semibold text-sm">1</span>
+                <div>
+                  <h4 class="font-medium text-white">Ingest &amp; Listen</h4>
+                  <p class="text-sm text-slate-400 mt-1">Connect via API or forwarding rule. We process attachments and thread history.</p>
+                </div>
+              </div>
+            </button>
+            <button class="w-full text-left p-4 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10" onclick="switchTab(1)">
+              <div class="flex items-center gap-4">
+                 <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-800 text-slate-400 font-semibold text-sm">2</span>
+                <div>
+                  <h4 class="font-medium text-slate-200">Extract &amp; Categorize</h4>
+                  <p class="text-sm text-slate-400 mt-1">AI models parse intent, urgency, and extract specific entities based on your schema.</p>
+                </div>
+              </div>
+            </button>
+            <button class="w-full text-left p-4 rounded-xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/10" onclick="switchTab(2)">
+              <div class="flex items-center gap-4">
+                 <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-800 text-slate-400 font-semibold text-sm">3</span>
+                <div>
+                  <h4 class="font-medium text-slate-200">Database Sync</h4>
+                  <p class="text-sm text-slate-400 mt-1">Formatted data is pushed to your PostgreSQL, Mongo, or Vector store instantly.</p>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Visual -->
+        <div class="relative h-[400px] w-full">
+           <!-- Tab 1 Image -->
+           <div id="visual-0" class="absolute inset-0 transition-opacity duration-500 glass-card rounded-2xl p-6 flex items-center justify-center opacity-100">
+             <div class="text-center space-y-4">
+               <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-500/10 text-indigo-400 mb-2 relative">
+                 <div class="absolute inset-0 rounded-full border border-indigo-500/30 animate-ping opacity-20"></div>
+                 <svg width="40" height="40" viewBox="0 0 24 24" fill="none" class="solar-icon">
+                   <path class="solar-duotone-secondary" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" fill="currentColor"></path>
+                   <path class="solar-duotone-primary" d="M12 7V13L16 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+                 </svg>
+               </div>
+               <p class="text-white font-medium">Listening to Port 25...</p>
+               <div class="flex justify-center gap-2">
+                 <span class="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-bounce"></span>
+                 <span class="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-bounce delay-100"></span>
+                 <span class="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-bounce delay-200"></span>
+               </div>
+             </div>
+           </div>
+
+           <!-- Tab 2 Image -->
+           <div id="visual-1" class="absolute inset-0 transition-opacity duration-500 glass-card rounded-2xl p-6 opacity-0 pointer-events-none">
+             <div class="space-y-3 font-mono text-xs">
+               <div class="flex items-center gap-2 border-b border-white/5 pb-2 mb-4">
+                 <span class="text-emerald-400">●</span> Processing Entities
+               </div>
+               <div class="bg-slate-950/50 p-3 rounded border border-white/5">
+                 <span class="text-purple-400">Entity:</span> Project_Deadline<br>
+                 <span class="text-slate-500">Value:</span> "Oct 24th"<br>
+                 <span class="text-emerald-500">Confidence: 98%</span>
+               </div>
+               <div class="bg-slate-950/50 p-3 rounded border border-white/5">
+                 <span class="text-purple-400">Entity:</span> Budget_Cap<br>
+                 <span class="text-slate-500">Value:</span> 15000 USD<br>
+                 <span class="text-emerald-500">Confidence: 99%</span>
+               </div>
+             </div>
+           </div>
+
+           <!-- Tab 3 Image -->
+           <div id="visual-2" class="absolute inset-0 transition-opacity duration-500 glass-card rounded-2xl p-6 opacity-0 pointer-events-none flex items-center justify-center">
+              <div class="w-full max-w-sm bg-slate-950 rounded-lg border border-white/10 overflow-hidden">
+                <div class="bg-slate-900 px-4 py-2 text-xs text-slate-400 border-b border-white/5">database_v1.sql</div>
+                <div class="p-4 space-y-2">
+                  <div class="h-2 bg-slate-800 rounded w-full"></div>
+                  <div class="h-2 bg-slate-800 rounded w-5/6"></div>
+                  <div class="h-2 bg-green-500/20 rounded w-2/3"></div>
+                  <div class="h-2 bg-slate-800 rounded w-4/5"></div>
+                </div>
+                <div class="px-4 py-3 bg-green-500/10 text-green-400 text-xs flex items-center gap-2 border-t border-green-500/20">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12L10 17L20 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  Sync Complete
+                </div>
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-24 relative overflow-hidden">
+    <div class="absolute inset-0 bg-indigo-900/10"></div>
+    <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
+      <h2 class="text-4xl sm:text-5xl font-semibold tracking-tight text-white mb-6">Stop wasting data.</h2>
+      <p class="text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
+        Start building your organizational brain today. Connect your first inbox in under 5 minutes.
+      </p>
+      
+      <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+        <input type="email" placeholder="Enter work email" class="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+        <button class="bg-white text-slate-950 px-6 py-3.5 rounded-xl font-medium hover:bg-slate-200 transition-colors">
+          Get Started
+        </button>
+      </form>
+      <p class="mt-4 text-xs text-slate-500">No credit card required for the pilot program.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 bg-slate-950 pt-16 pb-8">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <div class="col-span-2 md:col-span-1">
+          <div class="flex items-center gap-2 mb-4 text-white">
+            <div class="w-6 h-6 rounded bg-gradient-to-br from-indigo-500 to-violet-600"></div>
+            <span class="font-semibold tracking-tight">Mail2Knowledge</span>
+          </div>
+          <p class="text-sm text-slate-500">San Francisco, CA</p>
+        </div>
+        
+        <div>
+          <h4 class="text-sm font-semibold text-white mb-4">Product</h4>
+          <ul class="space-y-2 text-sm text-slate-400">
+            <li><a href="#" class="hover:text-indigo-400 transition-colors">Extraction Engine</a></li>
+            <li><a href="#" class="hover:text-indigo-400 transition-colors">Integrations</a></li>
+            <li><a href="#" class="hover:text-indigo-400 transition-colors">Security</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-sm font-semibold text-white mb-4">Company</h4>
+          <ul class="space-y-2 text-sm text-slate-400">
+            <li><a href="#" class="hover:text-indigo-400 transition-colors">About</a></li>
+            <li><a href="#" class="hover:text-indigo-400 transition-colors">Customers</a></li>
+            <li><a href="#" class="hover:text-indigo-400 transition-colors">Careers</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-sm font-semibold text-white mb-4">Legal</h4>
+          <ul class="space-y-2 text-sm text-slate-400">
+            <li><a href="#" class="hover:text-indigo-400 transition-colors">Privacy</a></li>
+            <li><a href="#" class="hover:text-indigo-400 transition-colors">Terms</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-xs text-slate-600">© 2024 Mail2Knowledge Inc. All rights reserved.</p>
+        <div class="flex gap-4">
+          <!-- Social Icons (Iconify Solar Outline) -->
+          <a href="#" class="text-slate-500 hover:text-white transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"></path><path d="M14.5 9C14.5 9 14 10.5 13 11C12 11.5 10.5 10 9 13C8.5 14 9.5 15.5 9.5 15.5"></path></svg>
+          </a>
+          <a href="#" class="text-slate-500 hover:text-white transition-colors">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 17.5V19C21 20.1046 20.1046 21 19 21H17M21 17.5V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17.5M21 17.5L16.5 13M3 17.5V19C3 20.1046 3.89543 21 5 21H7M3 17.5L7.5 13M10 21H14"></path></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(index) {
+      // Buttons
+      const buttons = document.querySelectorAll('#tab-triggers button');
+      buttons.forEach((btn, i) => {
+        if(i === index) {
+          btn.classList.remove('bg-transparent', 'border-transparent');
+          btn.classList.add('bg-white/5', 'border-white/10');
+          btn.querySelector('span').classList.remove('bg-slate-800', 'text-slate-400');
+          btn.querySelector('span').classList.add('bg-indigo-500/20', 'text-indigo-400');
+          btn.querySelector('h4').classList.remove('text-slate-200');
+          btn.querySelector('h4').classList.add('text-white');
+        } else {
+          btn.classList.add('bg-transparent', 'border-transparent');
+          btn.classList.remove('bg-white/5', 'border-white/10');
+           btn.querySelector('span').classList.add('bg-slate-800', 'text-slate-400');
+          btn.querySelector('span').classList.remove('bg-indigo-500/20', 'text-indigo-400');
+          btn.querySelector('h4').classList.add('text-slate-200');
+          btn.querySelector('h4').classList.remove('text-white');
+        }
+      });
+
+      // Visuals
+      const visuals = [
+        document.getElementById('visual-0'),
+        document.getElementById('visual-1'),
+        document.getElementById('visual-2')
+      ];
+
+      visuals.forEach((vis, i) => {
+        if(i === index) {
+          vis.style.opacity = '1';
+          vis.style.pointerEvents = 'auto';
+        } else {
+          vis.style.opacity = '0';
+          vis.style.pointerEvents = 'none';
+        }
+      });
+    }
+  </script>
+
+</body></html>
