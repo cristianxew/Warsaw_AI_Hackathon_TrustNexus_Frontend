@@ -15,10 +15,10 @@ import {
   NoDataEmptyState,
   Spinner,
 } from "../components/ui";
-import { FileSelect, FileList } from "../components/upload";
-import { useFileUpload } from "../hooks";
-import { getParsedEmails } from "../api/client";
+import { uploadEmailPath, getParsedEmails } from "../api/client";
 import type { BackendParsedEmail } from "../types";
+
+const EMAIL_DATA_PATH = "Users/cristianbernal/aprender/Warsaw_AI_Hackathon_TrustNexus_backend/data";
 
 export function Dashboard() {
   return (
@@ -37,9 +37,12 @@ function UploadPage() {
   const [parsedEmails, setParsedEmails] = useState<BackendParsedEmail[]>([]);
   const [isLoadingEmails, setIsLoadingEmails] = useState(false);
   const [emailsError, setEmailsError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadResult, setUploadResult] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const fetchEmails = async () => {
-    setIsLoadingEmails(true); 
+    setIsLoadingEmails(true);
     setEmailsError(null);
     try {
       const emails = await getParsedEmails();
@@ -51,140 +54,113 @@ function UploadPage() {
     }
   };
 
+  const handleUpload = async () => {
+    setIsUploading(true);
+    setUploadError(null);
+    setUploadResult(null);
+    try {
+      const response = await uploadEmailPath(EMAIL_DATA_PATH);
+      setUploadResult(response.message || "Emails uploaded successfully");
+      fetchEmails();
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Failed to upload emails");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   // Fetch emails on page load
   useEffect(() => {
     fetchEmails();
   }, []);
 
-  const {
-    files,
-    isUploading,
-    result,
-    error,
-    setFolderPath,
-    removeFile,
-    clearFiles,
-    processFiles,
-  } = useFileUpload({
-    onUploadComplete: (message) => {
-      console.log("Upload complete:", message);
-      // Fetch parsed emails after successful upload
-      fetchEmails();
-    },
-  });
-
-  const pendingCount = files.filter((f) => f.status === "pending").length;
-
   return (
     <DashboardContent>
       <PageHeader
-        title="Upload Emails"
-        description="Process email files to extract organizational knowledge"
+        title="Email Analysis"
+        description="Process and analyze email data to extract organizational knowledge"
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Upload Form Card */}
+      <div className="space-y-6">
+        {/* Upload Action Card - Compact */}
         <Card variant="glass" padding="lg">
-          <CardHeader>
+          <div className="flex items-center justify-between gap-4">
             <div>
-              <CardTitle>Email Files</CardTitle>
+              <CardTitle>Process Emails</CardTitle>
               <CardDescription>
-                Select a folder
+                Load emails from the server data directory
               </CardDescription>
             </div>
-          </CardHeader>
-
-          <div className="space-y-6">
-            <FileSelect
-              onFolderSelected={setFolderPath}
-              disabled={isUploading}
-            />
-
-            {files.length > 0 && (
-              <>
-                <FileList files={files} onRemove={removeFile} />
-
-                <div className="flex gap-3">
-                  <Button
-                    onClick={processFiles}
-                    isLoading={isUploading}
-                    disabled={pendingCount === 0}
-                    className="flex-1"
-                    rightIcon={
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                      </svg>
-                    }
-                  >
-                    Send to Backend
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={clearFiles}
-                    disabled={isUploading}
-                  >
-                    Clear All
-                  </Button>
-                </div>
-              </>
-            )}
-
-            {/* Result Display */}
-            {result && (
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                <div className="flex items-center gap-2 text-emerald-400">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M20 6L9 17l-5-5" />
-                  </svg>
-                  <span className="font-medium">Success</span>
-                </div>
-                <p className="text-sm text-emerald-300/80 mt-1">{result}</p>
-              </div>
-            )}
-
-            {/* Error Display */}
-            {error && (
-              <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-                <div className="flex items-center gap-2 text-red-400">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
-                  <span className="font-medium">Error</span>
-                </div>
-                <p className="text-sm text-red-300/80 mt-1">{error}</p>
-              </div>
-            )}
+            <Button
+              onClick={handleUpload}
+              isLoading={isUploading}
+              rightIcon={
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+              }
+            >
+              Upload Emails
+            </Button>
           </div>
+
+          {/* Result Display */}
+          {uploadResult && (
+            <div className="mt-4 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+              <div className="flex items-center gap-2 text-emerald-400">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+                <span className="font-medium">Success</span>
+              </div>
+              <p className="text-sm text-emerald-300/80 mt-1">{uploadResult}</p>
+            </div>
+          )}
+
+          {/* Error Display */}
+          {uploadError && (
+            <div className="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+              <div className="flex items-center gap-2 text-red-400">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <span className="font-medium">Error</span>
+              </div>
+              <p className="text-sm text-red-300/80 mt-1">{uploadError}</p>
+            </div>
+          )}
         </Card>
 
-        {/* Parsed Emails Card */}
+        {/* Email Summaries Card - Main Focus */}
         <Card variant="glass" padding="lg">
           <CardHeader>
             <div className="flex items-center justify-between w-full">
-              <CardTitle>Parsed Emails</CardTitle>
+              <CardTitle>Email Summaries</CardTitle>
               {parsedEmails.length > 0 && (
                 <Badge variant="success">{parsedEmails.length} emails</Badge>
               )}
@@ -192,7 +168,7 @@ function UploadPage() {
           </CardHeader>
 
           {isLoadingEmails ? (
-            <div className="flex items-center justify-center py-8">
+            <div className="flex items-center justify-center py-12">
               <Spinner size="lg" />
             </div>
           ) : emailsError ? (
@@ -200,18 +176,18 @@ function UploadPage() {
               <p className="text-sm text-red-400">{emailsError}</p>
             </div>
           ) : parsedEmails.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mx-auto mb-3">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-500">
+            <div className="text-center py-12">
+              <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center mx-auto mb-4">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-slate-500">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                   <polyline points="22,6 12,13 2,6" />
                 </svg>
               </div>
-              <p className="text-sm text-slate-400">No emails processed yet</p>
-              <p className="text-xs text-slate-500 mt-1">Upload a folder to get started</p>
+              <p className="text-slate-400">No emails processed yet</p>
+              <p className="text-sm text-slate-500 mt-1">Click "Upload Emails" to process emails from the server</p>
             </div>
           ) : (
-            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {parsedEmails.map((email, index) => (
                 <EmailCard key={index} email={email} />
               ))}
@@ -269,7 +245,7 @@ function ExportPage() {
 // Helper Components
 function EmailCard({ email }: { email: BackendParsedEmail }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const content = email.message_content || "";
+  const content = email.summary || "";
   const truncatedContent = content.length > 150
     ? content.substring(0, 150) + "..."
     : content;

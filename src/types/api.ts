@@ -17,6 +17,7 @@ export interface BackendParsedEmail {
   subject: string | null;
   date: string | null;
   message_content: string | null;
+  summary: string | null;
 }
 
 // LLM Analysis types for chat feature
