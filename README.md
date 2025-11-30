@@ -61,6 +61,14 @@ src/
 └── assets/           # Static assets (images, SVGs)
 ```
 
+## Screenshots
+
+### Dashboard - Initial State
+![Dashboard Initial](public/image.png)
+
+### Dashboard - Email Summaries
+![Dashboard with Emails](public/image2.png)
+
 ## Plugins
 
 Currently, two official plugins are available:
