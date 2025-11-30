@@ -12,7 +12,6 @@ import {
   CardDescription,
   Button,
   Badge,
-  NoDataEmptyState,
   Spinner,
 } from "../components/ui";
 import { uploadEmailPath, getParsedEmails } from "../api/client";
@@ -26,7 +25,6 @@ export function Dashboard() {
     <DashboardLayout>
       <Routes>
         <Route path="/" element={<UploadPage />} />
-        <Route path="/knowledge" element={<KnowledgePage />} />
         <Route path="/export" element={<ExportPage />} />
       </Routes>
     </DashboardLayout>
@@ -229,22 +227,6 @@ function UploadPage() {
           )}
         </Card>
       </div>
-    </DashboardContent>
-  );
-}
-
-// Knowledge Page - Display extracted knowledge
-function KnowledgePage() {
-  return (
-    <DashboardContent>
-      <PageHeader
-        title="Knowledge Base"
-        description="Browse and search extracted knowledge from your emails"
-      />
-
-      <Card variant="glass" padding="lg">
-        <NoDataEmptyState />
-      </Card>
     </DashboardContent>
   );
 }
