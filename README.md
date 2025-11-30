@@ -61,13 +61,14 @@ src/
 └── assets/           # Static assets (images, SVGs)
 ```
 
-## Screenshots
+### Video Demo
+[![Watch the video](https://img.youtube.com/vi/pDMuoqMXJ9Y/maxresdefault.jpg)](https://www.youtube.com/watch?v=pDMuoqMXJ9Y)
 
-### Dashboard - Initial State
-![Dashboard Initial](public/image.png)
+## Screenshots
 
 ### Dashboard - Email Summaries
 ![Dashboard with Emails](public/image2.png)
+
 
 ## Plugins
 
