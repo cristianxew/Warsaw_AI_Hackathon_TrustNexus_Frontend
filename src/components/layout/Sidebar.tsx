@@ -1,4 +1,5 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
+import logo from "../../assets/mail2knowledge.png";
 
 interface NavItem {
   name: string;
@@ -30,30 +31,9 @@ export function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-slate-950 border-r border-white/5 flex flex-col z-40">
       {/* Logo */}
-      <div className="h-16 px-6 flex items-center gap-3 border-b border-white/5">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="solar-icon"
-          >
-            <path
-              d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z"
-              className="opacity-40"
-              fill="currentColor"
-            />
-            <path
-              d="M15.5 13.5L12 11.5V7C12 6.45 11.55 6 11 6C10.45 6 10 6.45 10 7V12.16C10 12.59 10.21 13 10.57 13.24L14.63 15.86C15.08 16.15 15.68 16.03 15.98 15.57C16.27 15.11 16.15 14.51 15.69 14.21L15.5 13.5Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-        <span className="font-semibold text-white tracking-tight">
-          Mail2Knowledge
-        </span>
-      </div>
+      <Link to="/" className="mt-6 h-16 px-6 flex items-center gap-3 border-b border-white/5 hover:bg-white/5 transition-colors">
+        <img src={logo} alt="Mail2Knowledge" className="h-10" />
+      </Link>
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-6">
@@ -71,10 +51,9 @@ export function Sidebar() {
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
                     transition-all duration-200
-                    ${
-                      isActive
-                        ? "bg-indigo-500/10 text-indigo-400 shadow-[inset_0_0_0_1px_rgba(99,102,241,0.2)]"
-                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                    ${isActive
+                      ? "bg-indigo-500/10 text-indigo-400 shadow-[inset_0_0_0_1px_rgba(99,102,241,0.2)]"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
                     }
                   `}
                 >

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Routes, Route } from "react-router-dom";
 import {
   DashboardLayout,
@@ -18,7 +18,8 @@ import {
 import { uploadEmailPath, getParsedEmails } from "../api/client";
 import type { BackendParsedEmail } from "../types";
 
-const EMAIL_DATA_PATH = "Users/cristianbernal/aprender/Warsaw_AI_Hackathon_TrustNexus_backend/data";
+const POLLING_INTERVAL = 2000; // Poll every 2 seconds
+const EMAIL_DATA_PATH = import.meta.env.VITE_EMAIL_DATA_PATH;
 
 export function Dashboard() {
   return (
@@ -40,9 +41,11 @@ function UploadPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isPolling, setIsPolling] = useState(false);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const fetchEmails = async () => {
-    setIsLoadingEmails(true);
+  const fetchEmails = useCallback(async (showLoading = true) => {
+    if (showLoading) setIsLoadingEmails(true);
     setEmailsError(null);
     try {
       const emails = await getParsedEmails();
@@ -50,29 +53,47 @@ function UploadPage() {
     } catch (err) {
       setEmailsError(err instanceof Error ? err.message : "Failed to fetch emails");
     } finally {
-      setIsLoadingEmails(false);
+      if (showLoading) setIsLoadingEmails(false);
     }
-  };
+  }, []);
+
+  // Polling effect - fetch emails periodically while uploading
+  useEffect(() => {
+    if (isPolling) {
+      pollingRef.current = setInterval(() => {
+        fetchEmails(false); // Don't show loading spinner during polling
+      }, POLLING_INTERVAL);
+    }
+
+    return () => {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+    };
+  }, [isPolling, fetchEmails]);
 
   const handleUpload = async () => {
     setIsUploading(true);
+    setIsPolling(true); // Start polling
     setUploadError(null);
     setUploadResult(null);
     try {
       const response = await uploadEmailPath(EMAIL_DATA_PATH);
       setUploadResult(response.message || "Emails uploaded successfully");
-      fetchEmails();
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Failed to upload emails");
     } finally {
       setIsUploading(false);
+      setIsPolling(false); // Stop polling
+      fetchEmails(); // Final fetch
     }
   };
 
   // Fetch emails on page load
   useEffect(() => {
     fetchEmails();
-  }, []);
+  }, [fetchEmails]);
 
   return (
     <DashboardContent>
@@ -113,8 +134,21 @@ function UploadPage() {
             </Button>
           </div>
 
+          {/* Progress Display - shown while uploading */}
+          {isUploading && (
+            <div className="mt-4 p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+              <div className="flex items-center gap-2 text-indigo-400">
+                <Spinner size="sm" />
+                <span className="font-medium">Processing emails...</span>
+              </div>
+              <p className="text-sm text-indigo-300/80 mt-1">
+                {parsedEmails.length} emails loaded so far. New emails will appear automatically.
+              </p>
+            </div>
+          )}
+
           {/* Result Display */}
-          {uploadResult && (
+          {uploadResult && !isUploading && (
             <div className="mt-4 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
               <div className="flex items-center gap-2 text-emerald-400">
                 <svg

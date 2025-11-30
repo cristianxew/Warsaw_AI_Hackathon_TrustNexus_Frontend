@@ -24,9 +24,9 @@ export function Hero() {
 
           {/* Description */}
           <p className="text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto animate-fade-slide-in-2">
-            Automatically extract decisions, tasks, and arrangements from B2B
-            communications. Feed your RAG systems and workflows with structured,
-            clean data.
+            Upload your email folders, get AI-powered summaries for each message,
+            and ask questions about your communications. Secure encrypted storage
+            keeps your data safe.
           </p>
 
           {/* CTA Button */}
@@ -90,17 +90,21 @@ function DashboardPreview() {
               className="solar-icon"
             >
               <path
-                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <polyline
+                points="22,6 12,13 2,6"
                 stroke="currentColor"
                 strokeWidth="1.5"
               />
             </svg>
-            api/v1/email/extract-knowledge
+            Email Summaries Dashboard
           </div>
         </div>
 
         <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/5 h-[400px]">
-          {/* Input Side */}
           <div className="p-6 space-y-4 bg-slate-950/50">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">

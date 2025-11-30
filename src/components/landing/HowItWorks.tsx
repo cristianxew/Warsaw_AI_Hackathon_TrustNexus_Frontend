@@ -2,19 +2,19 @@ import { useState } from "react";
 
 const tabs = [
   {
-    title: "Ingest & Listen",
+    title: "Upload",
     description:
-      "Connect via API or forwarding rule. We process attachments and thread history.",
+      "Point to your email folder on the server. We process all emails in the directory.",
   },
   {
-    title: "Extract & Categorize",
+    title: "Process",
     description:
-      "AI models parse intent, urgency, and extract specific entities based on your schema.",
+      "AI generates concise summaries for each email, extracting key information automatically.",
   },
   {
-    title: "Database Sync",
+    title: "Explore",
     description:
-      "Formatted data is pushed to your PostgreSQL, Mongo, or Vector store instantly.",
+      "View summaries in the dashboard and ask questions about your email content.",
   },
 ];
 
@@ -99,33 +99,20 @@ function TabVisual({ index, isActive }: { index: number; isActive: boolean }) {
       >
         <div className="text-center space-y-4">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-500/10 text-indigo-400 mb-2 relative">
-            <div className="absolute inset-0 rounded-full border border-indigo-500/30 animate-ping opacity-20"></div>
             <svg
               width="40"
               height="40"
               viewBox="0 0 24 24"
               fill="none"
-              className="solar-icon"
+              stroke="currentColor"
+              strokeWidth="1.5"
             >
-              <path
-                className="solar-duotone-secondary"
-                d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z"
-                fill="currentColor"
-              />
-              <path
-                className="solar-duotone-primary"
-                d="M12 7V13L16 15"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
             </svg>
           </div>
-          <p className="text-white font-medium">Listening to Port 25...</p>
-          <div className="flex justify-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-bounce"></span>
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-bounce [animation-delay:100ms]"></span>
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-bounce [animation-delay:200ms]"></span>
+          <p className="text-white font-medium">Select Email Folder</p>
+          <div className="text-sm text-slate-400 font-mono bg-slate-950 px-4 py-2 rounded-lg border border-white/5">
+            /data/emails/
           </div>
         </div>
       </div>
@@ -137,21 +124,26 @@ function TabVisual({ index, isActive }: { index: number; isActive: boolean }) {
       <div className={`${baseClasses} ${activeClasses}`}>
         <div className="space-y-3 font-mono text-xs">
           <div className="flex items-center gap-2 border-b border-white/5 pb-2 mb-4">
-            <span className="text-emerald-400">●</span> Processing Entities
+            <span className="text-emerald-400">●</span> Generating Summaries...
           </div>
           <div className="bg-slate-950/50 p-3 rounded border border-white/5">
-            <span className="text-purple-400">Entity:</span> Project_Deadline
+            <span className="text-purple-400">Email 1:</span> Projekt Q4
             <br />
-            <span className="text-slate-500">Value:</span> "Oct 24th"
+            <span className="text-slate-500">Summary:</span> Meeting scheduled for Tuesday...
             <br />
-            <span className="text-emerald-500">Confidence: 98%</span>
+            <span className="text-emerald-500">Status: Complete</span>
           </div>
           <div className="bg-slate-950/50 p-3 rounded border border-white/5">
-            <span className="text-purple-400">Entity:</span> Budget_Cap
+            <span className="text-purple-400">Email 2:</span> Budget Approval
             <br />
-            <span className="text-slate-500">Value:</span> 15000 USD
+            <span className="text-slate-500">Summary:</span> Budget of 45,000 PLN approved...
             <br />
-            <span className="text-emerald-500">Confidence: 99%</span>
+            <span className="text-emerald-500">Status: Complete</span>
+          </div>
+          <div className="bg-slate-950/50 p-3 rounded border border-indigo-500/30 animate-pulse">
+            <span className="text-purple-400">Email 3:</span> Team Update
+            <br />
+            <span className="text-indigo-400">Processing...</span>
           </div>
         </div>
       </div>
@@ -163,16 +155,22 @@ function TabVisual({ index, isActive }: { index: number; isActive: boolean }) {
       className={`${baseClasses} ${activeClasses} flex items-center justify-center`}
     >
       <div className="w-full max-w-sm bg-slate-950 rounded-lg border border-white/10 overflow-hidden">
-        <div className="bg-slate-900 px-4 py-2 text-xs text-slate-400 border-b border-white/5">
-          database_v1.sql
+        <div className="bg-slate-900 px-4 py-2 text-xs text-slate-400 border-b border-white/5 flex items-center gap-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          Ask about your emails...
         </div>
-        <div className="p-4 space-y-2">
-          <div className="h-2 bg-slate-800 rounded w-full"></div>
-          <div className="h-2 bg-slate-800 rounded w-5/6"></div>
-          <div className="h-2 bg-green-500/20 rounded w-2/3"></div>
-          <div className="h-2 bg-slate-800 rounded w-4/5"></div>
+        <div className="p-4 space-y-3">
+          <div className="bg-indigo-500/10 text-indigo-300 text-xs p-3 rounded-lg border border-indigo-500/20">
+            What decisions were made in Q4 meetings?
+          </div>
+          <div className="bg-slate-800/50 text-slate-300 text-xs p-3 rounded-lg">
+            Based on your emails, the key Q4 decisions include: budget approval of 45,000 PLN, project timeline confirmation...
+          </div>
         </div>
-        <div className="px-4 py-3 bg-green-500/10 text-green-400 text-xs flex items-center gap-2 border-t border-green-500/20">
+        <div className="px-4 py-3 bg-emerald-500/10 text-emerald-400 text-xs flex items-center gap-2 border-t border-emerald-500/20">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
             <path
               d="M5 12L10 17L20 7"
@@ -182,7 +180,7 @@ function TabVisual({ index, isActive }: { index: number; isActive: boolean }) {
               strokeLinejoin="round"
             />
           </svg>
-          Sync Complete
+          Powered by Llama 3.3 70B
         </div>
       </div>
     </div>

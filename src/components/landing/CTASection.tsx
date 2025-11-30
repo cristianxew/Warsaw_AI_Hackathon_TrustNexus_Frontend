@@ -1,46 +1,37 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export function CTASection() {
-  const [email, setEmail] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log("Email submitted:", email);
-  };
-
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 bg-indigo-900/10"></div>
       <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
         <h2 className="text-4xl sm:text-5xl font-semibold tracking-tight text-white mb-6">
-          Stop wasting data.
+          Ready to explore your emails?
         </h2>
         <p className="text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
-          Start building your organizational brain today. Connect your first
-          inbox in under 5 minutes.
+          Upload your email folder and let AI generate summaries for each message.
+          Ask questions and discover insights from your communications.
         </p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center justify-center gap-3 bg-white text-slate-950 px-8 py-4 rounded-xl font-medium hover:bg-slate-200 transition-colors text-lg"
         >
-          <input
-            type="email"
-            placeholder="Enter work email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-          />
-          <button
-            type="submit"
-            className="bg-white text-slate-950 px-6 py-3.5 rounded-xl font-medium hover:bg-slate-200 transition-colors"
+          Try the Dashboard
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
           >
-            Get Started
-          </button>
-        </form>
-        <p className="mt-4 text-xs text-slate-500">
-          No credit card required for the pilot program.
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </Link>
+
+        <p className="mt-6 text-xs text-slate-500">
+          Built at Warsaw AI Hackathon 2024
         </p>
       </div>
     </section>
