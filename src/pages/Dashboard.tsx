@@ -249,8 +249,101 @@ function KnowledgePage() {
   );
 }
 
+// Helper function to convert emails to CSV
+function emailsToCSV(emails: BackendParsedEmail[]): string {
+  if (emails.length === 0) return "";
+
+  const columns: { key: keyof BackendParsedEmail; label: string }[] = [
+    { key: "sender_name", label: "Sender Name" },
+    { key: "sender_email", label: "Sender Email" },
+    { key: "recipient_name", label: "Recipient Name" },
+    { key: "recipient_email", label: "Recipient Email" },
+    { key: "subject", label: "Subject" },
+    { key: "date", label: "Date" },
+    { key: "message_content", label: "Message Content" },
+    { key: "summary", label: "Summary" },
+    { key: "category", label: "Category" },
+  ];
+
+  // Escape CSV field (handle commas, quotes, newlines)
+  const escapeField = (value: string | null): string => {
+    if (value === null) return "";
+    const str = String(value);
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
+  const headerRow = columns.map((col) => col.label).join(",");
+  const dataRows = emails.map((email) =>
+    columns.map((col) => escapeField(email[col.key])).join(",")
+  );
+
+  return [headerRow, ...dataRows].join("\n");
+}
+
 // Export Page - Export data
 function ExportPage() {
+  const [isExportingJSON, setIsExportingJSON] = useState(false);
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [exportResult, setExportResult] = useState<string | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  const handleExportJSON = async () => {
+    setIsExportingJSON(true);
+    setExportError(null);
+    setExportResult(null);
+    try {
+      const emails = await getParsedEmails();
+
+      const jsonString = JSON.stringify(emails, null, 2);
+      const blob = new Blob([jsonString], { type: "application/json" });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "emails.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setExportResult(`Successfully exported ${emails.length} emails as JSON`);
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : "Failed to export emails");
+    } finally {
+      setIsExportingJSON(false);
+    }
+  };
+
+  const handleExportCSV = async () => {
+    setIsExportingCSV(true);
+    setExportError(null);
+    setExportResult(null);
+    try {
+      const emails = await getParsedEmails();
+
+      const csvString = emailsToCSV(emails);
+      const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "emails.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      setExportResult(`Successfully exported ${emails.length} emails as CSV`);
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : "Failed to export emails");
+    } finally {
+      setIsExportingCSV(false);
+    }
+  };
+
   return (
     <DashboardContent>
       <PageHeader
@@ -258,19 +351,67 @@ function ExportPage() {
         description="Download your extracted knowledge in various formats"
       />
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <ExportCard
-          title="CSV Export"
-          description="Export knowledge records as a spreadsheet-compatible CSV file"
-          icon={<CSVIcon />}
-          format="CSV"
-        />
-        <ExportCard
-          title="JSON Export"
-          description="Export raw data in JSON format for integration with other tools"
-          icon={<JSONIcon />}
-          format="JSON"
-        />
+      <div className="space-y-6">
+        <div className="grid gap-6 md:grid-cols-2">
+          <ExportCard
+            title="CSV Export"
+            description="Export knowledge records as a spreadsheet-compatible CSV file"
+            icon={<CSVIcon />}
+            format="CSV"
+            onClick={handleExportCSV}
+            isLoading={isExportingCSV}
+          />
+          <ExportCard
+            title="JSON Export"
+            description="Export raw data in JSON format for integration with other tools"
+            icon={<JSONIcon />}
+            format="JSON"
+            onClick={handleExportJSON}
+            isLoading={isExportingJSON}
+          />
+        </div>
+
+        {/* Success Display */}
+        {exportResult && (
+          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+            <div className="flex items-center gap-2 text-emerald-400">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              <span className="font-medium">Export Complete</span>
+            </div>
+            <p className="text-sm text-emerald-300/80 mt-1">{exportResult}</p>
+          </div>
+        )}
+
+        {/* Error Display */}
+        {exportError && (
+          <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+            <div className="flex items-center gap-2 text-red-400">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <span className="font-medium">Export Failed</span>
+            </div>
+            <p className="text-sm text-red-300/80 mt-1">{exportError}</p>
+          </div>
+        )}
       </div>
     </DashboardContent>
   );
@@ -280,31 +421,35 @@ function ExportPage() {
 function EmailCard({ email }: { email: BackendParsedEmail }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const content = email.summary || "";
-  const truncatedContent = content.length > 150
-    ? content.substring(0, 150) + "..."
-    : content;
+  const truncatedContent =
+    content.length > 150 ? content.substring(0, 150) + "..." : content;
 
   return (
     <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="min-w-0 flex-1">
-          <h4 className="text-sm font-medium text-white truncate">{email.subject}</h4>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {email.date}
-          </p>
+          <h4 className="text-sm font-medium text-white truncate">
+            {email.subject}
+          </h4>
+          <p className="text-xs text-slate-500 mt-0.5">{email.date}</p>
         </div>
+        <Badge className="shrink-0">{email.category}</Badge>
       </div>
 
       {/* Sender & Recipient */}
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mb-3">
         <div>
           <span className="text-slate-500">From: </span>
-          <span className="text-slate-300">{email.sender_name || email.sender_email}</span>
+          <span className="text-slate-300">
+            {email.sender_name || email.sender_email}
+          </span>
         </div>
         <div>
           <span className="text-slate-500">To: </span>
-          <span className="text-slate-300">{email.recipient_name || email.recipient_email}</span>
+          <span className="text-slate-300">
+            {email.recipient_name || email.recipient_email}
+          </span>
         </div>
       </div>
 
@@ -331,22 +476,41 @@ function ExportCard({
   description,
   icon,
   format,
+  onClick,
+  isLoading,
+  disabled,
 }: {
   title: string;
   description: string;
   icon: React.ReactNode;
   format: string;
+  onClick?: () => void;
+  isLoading?: boolean;
+  disabled?: boolean;
 }) {
   return (
-    <Card variant="glass" hover padding="lg">
-      <div className="flex items-start gap-4">
+    <Card variant="glass" hover={!disabled} padding="lg">
+      <div className={`flex items-start gap-4 ${disabled ? "opacity-60" : ""}`}>
         <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
           {icon}
         </div>
         <div className="flex-1">
-          <h3 className="font-medium text-white mb-1">{title}</h3>
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-medium text-white">{title}</h3>
+            {disabled && (
+              <span className="text-xs text-slate-500 bg-slate-800/50 px-2 py-0.5 rounded-full">
+                Coming soon
+              </span>
+            )}
+          </div>
           <p className="text-sm text-slate-400 mb-4">{description}</p>
-          <Button variant="secondary" size="sm">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={onClick}
+            isLoading={isLoading}
+            disabled={disabled || isLoading}
+          >
             Export {format}
           </Button>
         </div>

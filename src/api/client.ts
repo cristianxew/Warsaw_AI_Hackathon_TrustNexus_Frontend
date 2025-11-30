@@ -49,7 +49,7 @@ export async function uploadEmailPath(
 }
 
 /**
- * Get parsed emails from backend
+ * Get summary of emails from backend
  * GET /api/emails/
  */
 export async function getParsedEmails(): Promise<BackendParsedEmail[]> {
